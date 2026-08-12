@@ -8,8 +8,6 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="./manifest.json">
-
     <title>Fit Calculator</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -98,117 +96,288 @@
 
 <body>
 
-<div class="app">
+< class="app">
 
-    <h1>🔥 Fit Calculator</h1>
+    <!-- PANTALLA DE INICIO -->
+    <div id="inicio">
+
+    <h1>🔥 FIT CALCULATOR</h1>
+
+    <p style="text-align:center;">
+        Tu entrenamiento. Tu progreso.
+    </p>
+
+    <button onclick="mostrarPantalla('registro')">
+        🏋️ Registrar ejercicio
+    </button>
+
+    <button onclick="mostrarPantalla('progreso')">
+        📊 Ver mi progreso
+    </button>
+
+    <button onclick="mostrarPantalla('perfil')">
+        👤 Mi perfil
+    </button>
+
+    </div>
+
+
+  <!-- PANTALLA DE PERFIL -->
+
+<div id="perfil" style="display:none;">
+
+    <h1>👤 Mi perfil</h1>
+
+    <label>Nombre</label>
+
+    <input
+        type="text"
+        id="nombre"
+        placeholder="Ej: Ariel"
+    >
 
 
     <label>Peso (kg)</label>
 
     <input
         type="number"
-        id="peso"
+        id="pesoPerfil"
         placeholder="Ej: 70"
     >
 
 
-    <label>Tiempo de ejercicio</label>
+    <label>Altura (cm)</label>
 
     <input
         type="number"
-        id="tiempo"
-        placeholder="Ej: 60 minutos"
+        id="altura"
+        placeholder="Ej: 165"
     >
 
 
-    <label>Ejercicio</label>
+    <label>Objetivo</label>
 
-    <select id="ejercicio">
+    <select id="objetivo">
 
-        <option value="7">
-            🚴 Ciclismo
+        <option value="Perder peso">
+            🔥 Perder peso
         </option>
 
-        <option value="5">
-            🚶 Caminar
+        <option value="Mantener peso">
+            ⚖️ Mantener peso
         </option>
 
-        <option value="8">
-            🏃 Correr
-        </option>
-
-        <option value="6">
-            🏋️ Gimnasio
+        <option value="Ganar músculo">
+            💪 Ganar músculo
         </option>
 
     </select>
 
 
-    <button onclick="calcular()">
-
-        🔥 Calcular y guardar
-
+    <button onclick="guardarPerfil()">
+        💾 Guardar perfil
     </button>
 
 
-    <div id="resultado"></div>
+    <button onclick="mostrarPantalla('inicio')">
+        🏠 Volver al inicio
+    </button>
 
 
-    <div class="progreso">
+  <button onclick="mostrarPantalla('perfil')">
+    👤 Mi perfil
+  </button>
 
-        <h2>📊 Mi progreso</h2>
+  
+</div>
+  
+    <!-- PANTALLA DE REGISTRO -->
+    <div id="registro" style="display:none;">
 
-        <p>
-            🔥 Calorías:
-            <strong id="totalCalorias">0</strong>
-            kcal
-        </p>
+        <h1>🏋️ Registrar ejercicio</h1>
 
-        <p>
-            ⏱️ Minutos:
-            <strong id="totalMinutos">0</strong>
-        </p>
+        <label>Peso (kg)</label>
 
-        <p>
-            🏋️ Entrenamientos:
-            <strong id="totalEntrenamientos">0</strong>
-        </p>
-
-    </div>
-
-
-    <div class="grafica">
-
-        <h2>📈 Calorías</h2>
-
-        <canvas id="graficaCalorias"></canvas>
-
-    </div>
-
-
-    <div class="historial">
-
-        <h2>📋 Historial</h2>
-
-        <div id="lista"></div>
-
-        <button
-            class="borrar"
-            onclick="borrarHistorial()"
+        <input
+            type="number"
+            id="peso"
+            placeholder="Ej: 70"
         >
 
-            🗑️ Borrar historial
 
+        <label>Tiempo de ejercicio</label>
+
+        <input
+            type="number"
+            id="tiempo"
+            placeholder="Ej: 60 minutos"
+        >
+
+
+        <label>Ejercicio</label>
+
+        <select id="ejercicio">
+
+            <option value="7">
+                🚴 Ciclismo
+            </option>
+
+            <option value="5">
+                🚶 Caminar
+            </option>
+
+            <option value="8">
+                🏃 Correr
+            </option>
+
+            <option value="6">
+                🏋️ Gimnasio
+            </option>
+
+        </select>
+
+
+        <button onclick="calcular()">
+            🔥 Calcular y guardar
+        </button>
+
+
+        <div id="resultado"></div>
+
+
+        <button onclick="mostrarPantalla('inicio')">
+            🏠 Volver al inicio
         </button>
 
     </div>
 
-</div>
+
+    <!-- PANTALLA DE PROGRESO -->
+    <div id="progreso" style="display:none;">
+
+        <h1>📊 Mi progreso</h1>
+
+
+        <div class="progreso">
+
+            <p>
+                🔥 Calorías:
+                <strong id="totalCalorias">0</strong>
+                kcal
+            </p>
+
+            <p>
+                ⏱️ Minutos:
+                <strong id="totalMinutos">0</strong>
+            </p>
+
+            <p>
+                🏋️ Entrenamientos:
+                <strong id="totalEntrenamientos">0</strong>
+            </p>
+
+        </div>
+
+
+        <div class="grafica">
+
+            <h2>📈 Calorías</h2>
+
+            <canvas id="graficaCalorias"></canvas>
+
+        </div>
+
+
+        <div class="historial">
+
+            <h2>📋 Historial</h2>
+
+            <div id="lista"></div>
+
+            <button
+                class="borrar"
+                onclick="borrarHistorial()"
+            >
+                🗑️ Borrar historial
+            </button>
+
+        </div>
+
+
+        <button onclick="mostrarPantalla('inicio')">
+            🏠 Volver al inicio
+        </button>
+
+    </div>
+
+
+
 
 
 <script>
 
+function mostrarPantalla(pantalla) {
 
+    document.getElementById("inicio").style.display = "none";
+
+    document.getElementById("registro").style.display = "none";
+
+    document.getElementById("progreso").style.display = "none";
+
+
+    document.getElementById(pantalla).style.display = "block";
+
+
+    if (pantalla === "progreso") {
+
+        mostrarHistorial();
+
+        actualizarProgreso();
+
+    }
+
+}
+
+  function guardarPerfil() {
+
+    function cargarPerfil() {
+
+    let perfil =
+        JSON.parse(
+            localStorage.getItem("perfil")
+        );
+
+
+    if (!perfil) {
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "nombreInicio"
+    ).innerText = perfil.nombre;
+
+
+    document.getElementById(
+        "pesoInicio"
+    ).innerText = perfil.peso;
+
+
+    document.getElementById(
+        "objetivoInicio"
+    ).innerText = perfil.objetivo;
+
+    }
+
+
+    alert("✅ Perfil guardado.");
+
+    mostrarPantalla("inicio");
+
+  }
+  
 function calcular() {
 
     let peso =
@@ -525,9 +694,11 @@ mostrarHistorial();
 
 actualizarProgreso();
 
+cargarPerfil();
+
 
 </script>
 
-</body>
+</>
 
 </html>
