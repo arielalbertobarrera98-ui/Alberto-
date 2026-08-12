@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Fit Calculator</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+
+        .app {
+            max-width: 420px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .progreso {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 15px;
+        }
+
+        .grafica {
+            margin-top: 30px;
+        }
+
+        .historial {
+            margin-top: 30px;
+        }
+
+        .ejercicio {
+            background: #f5f5f5;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        .borrar {
+            background: #ddd;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <h1>🔥 Fit Calculator</h1>
+
+
+    <label>Peso (kg)</label>
+
+    <input
+        type="number"
+        id="peso"
+        placeholder="Ej: 70"
+    >
+
+
+    <label>Tiempo de ejercicio</label>
+
+    <input
+        type="number"
+        id="tiempo"
+        placeholder="Ej: 60 minutos"
+    >
+
+
+    <label>Ejercicio</label>
+
+    <select id="ejercicio">
+
+        <option value="7">
+            🚴 Ciclismo
+        </option>
+
+        <option value="5">
+            🚶 Caminar
+        </option>
+
+        <option value="8">
+            🏃 Correr
+        </option>
+
+        <option value="6">
+            🏋️ Gimnasio
+        </option>
+
+    </select>
+
+
+    <button onclick="calcular()">
+
+        🔥 Calcular y guardar
+
+    </button>
+
+
+    <div id="resultado"></div>
+
+
+    <div class="progreso">
+
+        <h2>📊 Mi progreso</h2>
+
+        <p>
+            🔥 Calorías:
+            <strong id="totalCalorias">0</strong>
+            kcal
+        </p>
+
+        <p>
+            ⏱️ Minutos:
+            <strong id="totalMinutos">0</strong>
+        </p>
+
+        <p>
+            🏋️ Entrenamientos:
+            <strong id="totalEntrenamientos">0</strong>
+        </p>
+
+    </div>
+
+
+    <div class="grafica">
+
+        <h2>📈 Calorías</h2>
+
+        <canvas id="graficaCalorias"></canvas>
+
+    </div>
+
+
+    <div class="historial">
+
+        <h2>📋 Historial</h2>
+
+        <div id="lista"></div>
+
+        <button
+            class="borrar"
+            onclick="borrarHistorial()"
+        >
+
+            🗑️ Borrar historial
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+function calcular() {
+
+    let peso =
+        Number(
+            document.getElementById("peso").value
+        );
+
+
+    let tiempo =
+        Number(
+            document.getElementById("tiempo").value
+        );
+
+
+    let ejercicioSelect =
+        document.getElementById("ejercicio");
+
+
+    let ejercicio =
+        Number(ejercicioSelect.value);
+
+
+    let nombreEjercicio =
+        ejercicioSelect.options[
+            ejercicioSelect.selectedIndex
+        ].text;
+
+
+    if (peso <= 0 || tiempo <= 0) {
+
+        document.getElementById("resultado").innerText =
+            "⚠️ Introduce los datos correctamente.";
+
+        return;
+
+    }
+
+
+    let calorias =
+        ejercicio * peso * (tiempo / 60);
+
+
+    calorias =
+        Math.round(calorias);
+
+
+    document.getElementById("resultado").innerText =
+        "🔥 " + calorias +
+        " kcal aproximadamente";
+
+
+    guardarEjercicio(
+        nombreEjercicio,
+        tiempo,
+        calorias
+    );
+
+}
+
+
+
+function guardarEjercicio(
+    nombre,
+    tiempo,
+    calorias
+) {
+
+    let historial =
+        JSON.parse(
+            localStorage.getItem("historial")
+        ) || [];
+
+
+    let nuevoEjercicio = {
+
+        ejercicio: nombre,
+
+        tiempo: tiempo,
+
+        calorias: calorias,
+
+        fecha:
+            new Date().toLocaleDateString()
+
+    };
+
+
+    historial.push(nuevoEjercicio);
+
+
+    localStorage.setItem(
+        "historial",
+        JSON.stringify(historial)
+    );
+
+
+    mostrarHistorial();
+
+    actualizarProgreso();
+
+}
+
+
+
+function mostrarHistorial() {
+
+    let historial =
+        JSON.parse(
+            localStorage.getItem("historial")
+        ) || [];
+
+
+    let lista =
+        document.getElementById("lista");
+
+
+    lista.innerHTML = "";
+
+
+    historial.forEach(function(item) {
+
+        let div =
+            document.createElement("div");
+
+
+        div.className =
+            "ejercicio";
+
+
+        div.innerHTML =
+
+            "<strong>" +
+            item.ejercicio +
+            "</strong><br>" +
+
+            "⏱️ " +
+            item.tiempo +
+            " minutos<br>" +
+
+            "🔥 " +
+            item.calorias +
+            " kcal<br>" +
+
+            "📅 " +
+            item.fecha;
+
+
+        lista.appendChild(div);
+
+    });
+
+
+    crearGrafica();
+
+}
+
+
+
+function actualizarProgreso() {
+
+    let historial =
+        JSON.parse(
+            localStorage.getItem("historial")
+        ) || [];
+
+
+    let calorias = 0;
+
+    let minutos = 0;
+
+
+    historial.forEach(function(item) {
+
+        calorias +=
+            Number(item.calorias);
+
+        minutos +=
+            Number(item.tiempo);
+
+    });
+
+
+    document.getElementById(
+        "totalCalorias"
+    ).innerText = calorias;
+
+
+    document.getElementById(
+        "totalMinutos"
+    ).innerText = minutos;
+
+
+    document.getElementById(
+        "totalEntrenamientos"
+    ).innerText =
+        historial.length;
+
+}
+
+
+
+function crearGrafica() {
+
+    let historial =
+        JSON.parse(
+            localStorage.getItem("historial")
+        ) || [];
+
+
+    let etiquetas = [];
+
+    let datos = [];
+
+
+    historial.forEach(function(item) {
+
+        etiquetas.push(item.fecha);
+
+        datos.push(item.calorias);
+
+    });
+
+
+    let canvas =
+        document.getElementById(
+            "graficaCalorias"
+        );
+
+
+    if (!canvas) {
+
+        return;
+
+    }
+
+
+    if (window.miGrafica) {
+
+        window.miGrafica.destroy();
+
+    }
+
+
+    window.miGrafica =
+        new Chart(canvas, {
+
+            type: "line",
+
+            data: {
+
+                labels: etiquetas,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Calorías quemadas",
+
+                        data: datos,
+
+                        tension: 0.3
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true
+
+                    }
+
+                }
+
+            }
+
+        });
+
+}
+
+
+
+function borrarHistorial() {
+
+    localStorage.removeItem(
+        "historial"
+    );
+
+
+    mostrarHistorial();
+
+    actualizarProgreso();
+
+
+    document.getElementById(
+        "resultado"
+    ).innerText =
+        "🗑️ Historial eliminado.";
+
+}
+
+
+
+mostrarHistorial();
+
+actualizarProgreso();
+
+
+</script>
+
+</body>
+
+</html>
